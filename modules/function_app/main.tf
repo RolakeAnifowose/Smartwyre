@@ -13,12 +13,13 @@ resource "azurerm_windows_function_app" "new" {
 
   site_config {
     ftps_state = "Disabled"
-    app_scale_limit = 2
-    use_32_bit_worker = false
+    app_scale_limit   = lookup(var.function_configurations[each.key], "app_scale_limit", 2)
+    use_32_bit_worker = lookup(var.function_configurations[each.key], "use_32_bit_worker", false)
 
     application_stack {
-      dotnet_version  = "v8.0"
-      use_dotnet_isolated_runtime = true
+      dotnet_version              = lookup(var.function_configurations[each.key], "dotnet_version", "v8.0")
+      use_dotnet_isolated_runtime = lookup(var.function_configurations[each.key], "use_dotnet_isolated_runtime", true)
+      
     }
   }
 

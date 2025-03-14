@@ -37,4 +37,11 @@ module "function_app" {
   app_config_id               = azurerm_app_configuration.functions_appcfg.id
   tenant_id = data.azurerm_client_config.current.tenant_id
   key_vault_id = azurerm_key_vault.functions_kv.id
+
+  function_configurations = {
+    "pricing" = { app_scale_limit = 2, dotnet_version = "v6.0", use_32_bit_worker = false, use_dotnet_isolated_runtime = true }
+    "products" = { app_scale_limit = 3, dotnet_version = "v6.0", use_32_bit_worker = false, use_dotnet_isolated_runtime = true }
+    "rebates" = { app_scale_limit = 4, dotnet_version = "v8.0", use_32_bit_worker = false, use_dotnet_isolated_runtime = true }
+    "products-denormalizations" = { app_scale_limit = 3, dotnet_version = "v8.0", use_32_bit_worker = false, use_dotnet_isolated_runtime = true}
+  }
 }

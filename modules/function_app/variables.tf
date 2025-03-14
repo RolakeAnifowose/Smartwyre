@@ -38,3 +38,14 @@ variable tenant_id {
 variable key_vault_id {
   type = string
 }
+
+variable "function_configurations" {
+  description = "Map of function configurations with function name as key"
+  type = map(object({
+    dotnet_version    = string
+    app_scale_limit   = number
+    use_32_bit_worker = bool
+    use_dotnet_isolated_runtime = bool
+  }))
+  default = {}
+}
