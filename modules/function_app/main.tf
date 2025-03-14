@@ -10,8 +10,10 @@ resource "azurerm_windows_function_app" "new" {
   https_only                  = true
   client_certificate_mode     = "Required"
   functions_extension_version = "~4"
+  
 
   site_config {
+    minimum_tls_version = "1.2"
     ftps_state = "Disabled"
     app_scale_limit   = lookup(var.function_configurations[each.key], "app_scale_limit", 2)
     use_32_bit_worker = lookup(var.function_configurations[each.key], "use_32_bit_worker", false)
