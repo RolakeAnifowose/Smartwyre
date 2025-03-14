@@ -1,9 +1,9 @@
-name: Terraform CI/CD for Game Day Notification
+name: Terraform CI/CD Pipeline for Smartwyre Platform Engineer Assessment
 
 on:
   push:
     branches:
-      - master
+      - develop
 
 jobs:
   terraform:
