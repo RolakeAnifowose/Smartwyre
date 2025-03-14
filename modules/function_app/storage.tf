@@ -1,7 +1,7 @@
 resource "azurerm_storage_account" "func_storage" {
   for_each = var.functions
 
-  name                             = format("myfunc%s", each.key)
+  name                             = lower(substr(replace(format("myfunc%s", each.key), "-", ""), 0, 24))
   location                         = var.resource_group.location
   resource_group_name              = var.resource_group.name
   account_tier                     = "Standard"

@@ -3,6 +3,7 @@ variable function_app_names {
     default = [
       "pricing",
       "products",
-      "rebates"
+      "rebates",
+      "products-denormalizations"
     ]
 }
