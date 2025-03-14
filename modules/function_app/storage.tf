@@ -12,7 +12,7 @@ resource "azurerm_storage_account" "func_storage" {
 
   blob_properties {
     last_access_time_enabled = true
-
+    access_tier = "Cool"
     delete_retention_policy {
       days = 5
     }
