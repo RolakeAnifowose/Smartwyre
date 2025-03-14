@@ -21,6 +21,5 @@ resource "azurerm_storage_account" "func_storage" {
       days = 5
     }
   }
-
   tags = var.tags
 }

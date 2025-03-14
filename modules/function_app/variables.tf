@@ -3,7 +3,7 @@ variable "resource_group" {
 }
 
 variable "tags" {
-  default     = {}
+  type = map(string)
   description = "Common tags"
 }
 

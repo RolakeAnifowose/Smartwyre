@@ -3,6 +3,7 @@ data "azurerm_client_config" "current" {}
 resource azurerm_resource_group functions_rg {
   name = "myfunctions"
   location = "uksouth"
+  tags = var.tags
 }
 
 resource azurerm_key_vault functions_kv {
@@ -18,15 +19,16 @@ resource azurerm_key_vault functions_kv {
 
     secret_permissions = ["Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"]
   }
+
+  tags = var.tags
 }
 
 resource azurerm_app_configuration functions_appcfg {
   name = "myfunctions-appcfg"
   resource_group_name = azurerm_resource_group.functions_rg.name
   location = "uksouth"
+  tags = var.tags
 }
-
-
 
 module "function_app" {
   source = "./modules/function_app"
@@ -44,4 +46,5 @@ module "function_app" {
     "rebates" = { app_scale_limit = 4, dotnet_version = "v8.0", use_32_bit_worker = false, use_dotnet_isolated_runtime = true }
     "products-denormalizations" = { app_scale_limit = 3, dotnet_version = "v8.0", use_32_bit_worker = false, use_dotnet_isolated_runtime = true}
   }
+  tags = var.tags
 }
