@@ -9,10 +9,10 @@ resource "azurerm_storage_account" "func_storage" {
   allow_nested_items_to_be_public  = false
   min_tls_version                  = "TLS1_2"
   cross_tenant_replication_enabled = true
+  access_tier = "Cool"
 
   blob_properties {
     last_access_time_enabled = true
-    access_tier = "Cool"
     delete_retention_policy {
       days = 5
     }
