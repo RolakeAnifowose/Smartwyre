@@ -3,7 +3,7 @@ name: Terraform CI/CD Pipeline for Smartwyre Platform Engineer Assessment
 on:
   push:
     branches:
-      - develop
+      # - develop
 
 permissions:
   contents: read

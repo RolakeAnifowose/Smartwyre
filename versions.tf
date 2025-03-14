@@ -10,6 +10,13 @@ terraform {
     }
   }
 
+  backend "azurerm" {
+    storage_account_name = "smartwyreterraformstate"
+    container_name = "tfstate"
+    resource_group_name = "myfunctions"
+    key = "terraform.tfstate"
+  }
+
   required_version = ">= 1.10"
 }
 
