@@ -49,3 +49,16 @@ variable "function_configurations" {
   }))
   default = {}
 }
+
+variable "business_division" {
+  type = string
+}
+
+variable "project" {
+  type = string
+}
+
+variable "resource_name_prefix" {
+  description = "The resource name prefix for all resources"
+  type        = string
+}

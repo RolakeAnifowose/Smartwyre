@@ -47,4 +47,7 @@ module "function_app" {
     "products-denormalizations" = { app_scale_limit = 3, dotnet_version = "v8.0", use_32_bit_worker = false, use_dotnet_isolated_runtime = true}
   }
   tags = var.tags
+  business_division = var.business_division
+  project = var.project
+  resource_name_prefix = local.resource_name_prefix
 }
