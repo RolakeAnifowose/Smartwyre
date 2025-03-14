@@ -18,3 +18,20 @@ variable "tags" {
     Creation-mode = "Terraform"
   }
 }
+
+variable "business_division" {
+    description = "Business division that owns infrastructure"
+    type = string
+    default = "CloudOps"
+}
+
+variable "project" {
+  description = "Project name"
+  type = string
+  default = "Smartwyre"
+}
+
+variable "location" {
+  description = "Azure Region for resources"
+  default = "UK South"
+}

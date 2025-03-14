@@ -1,7 +1,7 @@
 resource "azurerm_windows_function_app" "new" {
   for_each = var.functions
 
-  name                        = "myfunc${each.key}"
+  name                        = "${local.resource_name_prefix}-${each.key}-function"
   location                    = var.resource_group.location
   resource_group_name         = var.resource_group.name
   service_plan_id             = azurerm_service_plan.func_service_plan[each.key].id

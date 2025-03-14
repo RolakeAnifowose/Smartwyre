@@ -1,15 +1,15 @@
 data "azurerm_client_config" "current" {}
 
-resource azurerm_resource_group functions_rg {
-  name = "myfunctions"
-  location = "uksouth"
+resource "azurerm_resource_group" "functions_rg" {
+  name = "${local.resource_name_prefix}-resource-group"
+  location = var.location
   tags = var.tags
 }
 
-resource azurerm_key_vault functions_kv {
-  name = "myfunctions-vault"
+resource "azurerm_key_vault" "functions_kv" {
+  name = "${local.resource_name_prefix}-vault"
   resource_group_name = azurerm_resource_group.functions_rg.name
-  location = "uksouth"
+  location = var.location
   sku_name = "standard"
   tenant_id = data.azurerm_client_config.current.tenant_id
 
@@ -23,10 +23,10 @@ resource azurerm_key_vault functions_kv {
   tags = var.tags
 }
 
-resource azurerm_app_configuration functions_appcfg {
-  name = "myfunctions-appcfg"
+resource "azurerm_app_configuration" "functions_appcfg" {
+  name = "${local.resource_name_prefix}-appcfg"
   resource_group_name = azurerm_resource_group.functions_rg.name
-  location = "uksouth"
+  location = var.location
   tags = var.tags
 }
 
