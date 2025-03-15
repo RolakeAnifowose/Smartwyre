@@ -191,3 +191,18 @@ This document outlines the changes made to improve the Terraform configuration f
     tags = var.tags
   }
 - **Rationale**: Monitoring helps ensure that function apps are performing as expected and provides insights into usage patterns, errors, and failures. 
+
+## Reusability Consideration
+**Git-based Module Source**: taking reusability into consideration, I created the function module as a reusable module and pushed it to a GitHub repository, versioning it and then using it as my source.
+ ```hcl
+module  "function_app" {
+  source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.1"
+  functions = toset(var.function_app_names)
+  resource_group = azurerm_resource_group.functions_rg
+  app_config_uri = azurerm_app_configuration.functions_appcfg.endpoint
+  app_config_id = azurerm_app_configuration.functions_appcfg.id
+  tenant_id = data.azurerm_client_config.current.tenant_id
+  key_vault_id = azurerm_key_vault.functions_kv.id
+}
+```
+**GitHub Repository for Function module:** https://github.com/RolakeAnifowose/smartwyre-function-module
