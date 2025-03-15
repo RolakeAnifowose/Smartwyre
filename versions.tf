@@ -10,12 +10,12 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    storage_account_name = "smartwyreterraformstate"
-    container_name = "tfstate"
-    resource_group_name = "CloudOps-Smartwyre-resource-group"
-    key = "terraform.tfstate"
-  }
+  # backend "azurerm" {
+  #   storage_account_name = "smartwyreterraformstate"
+  #   container_name = "tfstate"
+  #   resource_group_name = "CloudOps-Smartwyre-resource-group"
+  #   key = "terraform.tfstate"
+  # }
 
   required_version = ">= 1.10"
 }
