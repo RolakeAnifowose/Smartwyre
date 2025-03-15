@@ -21,10 +21,38 @@ This document outlines the changes made to improve the Terraform configuration f
 ### Uniform Naming Convention
 - **Change**: Added a resource name prefix to resource names containing the business division and project, ensuring uniformity across resources.
 - **Addition**: name = "${local.resource_name_prefix}-${each.key}-plan"
+- ```hcl
+  resource "azurerm_service_plan" "func_service_plan" {
+    for_each            = var.functions
+    name                = "${local.resource_name_prefix}-${each.key}-plan"
+    location            = var.resource_group.location
+    resource_group_name = var.resource_group.name
+    os_type             = "Windows"
+    sku_name            = var.ap_sku_name
+    lifecycle {
+      ignore_changes = [
+        maximum_elastic_worker_count
+      ]
+    }
+    tags = var.tags
+  }
+  ```
 - **Rationale**: Uniform naming makes it easier to keep track of related resources.
 
 ### Tagging for Consistency
 - **Change**: Introduced a global `tags` variable to ensure all resources are tagged consistently.
+```hcl
+  variable "tags" {
+    type        = map(string)
+    description = "Tags applied to all resources, root and module"
+    default = {
+      Business-divison = "CloudOps"
+      Environment      = "Test"
+      Project          = "Smartwyre"
+      Creation-mode    = "Terraform"
+    }
+  }
+```
 - **Rationale**: Tagging is essential for resource management, cost tracking, and compliance. Created global tags containing business division, environment, project and creation mode.
 
 ### Enhanced Security for Azure Key Vault
