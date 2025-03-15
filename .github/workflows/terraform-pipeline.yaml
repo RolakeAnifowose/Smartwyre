@@ -10,6 +10,7 @@ env:
   ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 permissions:
   contents: read
@@ -37,8 +38,25 @@ jobs:
     - name: Initialise
       run: terraform init
 
+    - name: Setup TFLint
+      run: |
+        curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+    - name: Run TFLint
+      run: tflint --init && tflint --format compact
+
     - name: Validate
       run: terraform validate
+
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@v2
+      with:
+        projectBaseDir: .
+        args: >
+          -Dsonar.organization=smartwyre-interview
+          -Dsonar.projectKey=function-app
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
     - name: Plan
       run: terraform plan
