@@ -35,3 +35,13 @@ variable "location" {
   description = "Azure Region for resources"
   default = "UK South"
 }
+
+variable "storage_account" {
+  description = "Storage account for Terraform state"
+  default = "smartwyreterraformstate"
+}
+
+variable "storage_container" {
+  description = "Name of the storage container"
+  default = "tfstate"
+}

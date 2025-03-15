@@ -1,7 +1,7 @@
 resource "azurerm_storage_account" "terraform_state" {
   name                             = var.storage_account
-  location                         = var.resource_group.location
-  resource_group_name              = var.resource_group.name
+  location                         = var.location
+  resource_group_name              = azurerm_resource_group.functions_rg.name
   account_tier                     = "Standard"
   account_replication_type         = "LRS"
   allow_nested_items_to_be_public  = false

@@ -62,13 +62,3 @@ variable "resource_name_prefix" {
   description = "The resource name prefix for all resources"
   type        = string
 }
-
-variable "storage_account" {
-  description = "Storage account for Terraform state"
-  default = "smartwyreterraformstate"
-}
-
-variable "storage_container" {
-  description = "Name of the storage container"
-  default = "tfstate"
-}
