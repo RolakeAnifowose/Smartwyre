@@ -22,6 +22,11 @@ resource "azurerm_key_vault" "functions_kv" {
     secret_permissions = ["Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"]
   }
 
+  network_acls {
+    bypass = "AzureServices"
+    default_action = "Deny"
+  }
+
   tags = var.tags
 }
 
