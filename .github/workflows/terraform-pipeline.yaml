@@ -1,4 +1,4 @@
-name: Terraform CI/CD Pipeline for Smartwyre Platform Engineer Assessment
+name: Terraform CI/CD Pipeline for Smartwyre Cloud Engineer Assessment
 
 on:
   push:
