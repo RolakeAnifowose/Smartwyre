@@ -38,6 +38,13 @@ jobs:
     - name: Initialise
       run: terraform init
 
+    - name: Setup TFLint
+      run: |
+        curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+    - name: Run TFLint
+      run: tflint --init && tflint --format compact
+
     - name: Validate
       run: terraform validate
 
