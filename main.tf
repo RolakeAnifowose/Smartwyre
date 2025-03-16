@@ -78,6 +78,7 @@ module "function_app" {
   app_config_id  = azurerm_app_configuration.functions_appcfg.id
   tenant_id      = data.azurerm_client_config.current.tenant_id
   key_vault_id   = azurerm_key_vault.functions_kv.id
+  identity       = azurerm_user_assigned_identity.identity.id 
 
   function_configurations = {
     "pricing" = {
