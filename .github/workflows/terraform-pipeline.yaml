@@ -45,6 +45,7 @@ jobs:
           az group create --name $RESOURCE_GROUP --location "Uk South"
           az storage account create --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --location "UK South" --sku Standard_LRS
           az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT
+          az storage account blob-service-properties update --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --enable-versioning true
         else
           echo "Storage account already exists."
         fi
