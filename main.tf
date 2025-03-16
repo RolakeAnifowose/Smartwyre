@@ -72,13 +72,14 @@ resource "azurerm_app_configuration" "functions_appcfg" {
 module "function_app" {
   source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.5"
 
-  functions      = toset(var.function_app_names)
-  resource_group = azurerm_resource_group.functions_rg
-  app_config_uri = azurerm_app_configuration.functions_appcfg.endpoint
-  app_config_id  = azurerm_app_configuration.functions_appcfg.id
-  tenant_id      = data.azurerm_client_config.current.tenant_id
-  key_vault_id   = azurerm_key_vault.functions_kv.id
-  identity       = azurerm_user_assigned_identity.identity.id 
+  functions        = toset(var.function_app_names)
+  resource_group   = azurerm_resource_group.functions_rg
+  app_config_uri   = azurerm_app_configuration.functions_appcfg.endpoint
+  app_config_id    = azurerm_app_configuration.functions_appcfg.id
+  tenant_id        = data.azurerm_client_config.current.tenant_id
+  key_vault_id     = azurerm_key_vault.functions_kv.id
+  identity         = azurerm_user_assigned_identity.identity.id
+  key_vault_key_id = azurerm_key_vault_key.key.id
 
   function_configurations = {
     "pricing" = {
