@@ -32,14 +32,14 @@ resource "azurerm_key_vault" "functions_kv" {
 }
 
 resource "azurerm_user_assigned_identity" "identity" {
-  location            = var.resource_group.location
+  location            = var.location
   name                = "${local.resource_name_prefix}-user-assigned-identity"
-  resource_group_name = var.resource_group.name
+  resource_group_name = azurerm_resource_group.functions_rg.name
 }
 
 resource "azurerm_key_vault_key" "key" {
   name         = "${local.resource_name_prefix}-vault-key"
-  key_vault_id = azurerm_key_vault.functions_kv.id
+  key_vault_id = var.key_vault_id
   key_type     = "RSA"
   key_size     = 2048
 
