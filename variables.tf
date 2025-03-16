@@ -37,14 +37,14 @@ variable "location" {
   type = string
 }
 
-variable "storage_account" {
-  description = "Storage account for Terraform state"
-  default = "smartwyreterraformstate"
-  type = string
-}
+# variable "storage_account" {
+#   description = "Storage account for Terraform state"
+#   default = "smartwyreterraformstate"
+#   type = string
+# }
 
-variable "storage_container" {
-  description = "Name of the storage container"
-  default = "tfstate"
-  type = string
-}
+# variable "storage_container" {
+#   description = "Name of the storage container"
+#   default = "tfstate"
+#   type = string
+# }
