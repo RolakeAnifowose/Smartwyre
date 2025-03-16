@@ -52,7 +52,7 @@ jobs:
     - name: Terraform Initialise
       run: terraform init
 
-    - name: Terraform Initialise
+    - name: Terraform Format
       run: terraform fmt
 
     - name: Setup TFLint
