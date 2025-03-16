@@ -19,8 +19,8 @@ resource "azurerm_key_vault" "functions_kv" {
     tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = data.azurerm_client_config.current.object_id
 
-    secret_permissions = ["Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"]
-    key_permissions    = ["Get", "List", "Update", "Create", "Import", "Delete", "Backup", "Recover", "Backup", "Restore"]
+    secret_permissions = ["Get", "List"]
+    key_permissions    = ["Get", "List"]
   }
 
   tags = var.tags
@@ -47,6 +47,10 @@ resource "azurerm_key_vault_key" "key" {
     "wrapKey",
   ]
 
+  depends_on = [
+    azurerm_key_vault.functions_kv
+  ]
+
   rotation_policy {
     automatic {
       time_before_expiry = "P30D"
@@ -65,7 +69,7 @@ resource "azurerm_app_configuration" "functions_appcfg" {
 }
 
 module "function_app" {
-  source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.8"
+  source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.9"
 
   functions      = toset(var.function_app_names)
   resource_group = azurerm_resource_group.functions_rg
