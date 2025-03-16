@@ -38,7 +38,7 @@ resource "azurerm_app_configuration" "functions_appcfg" {
 }
 
 module "function_app" {
-  source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.1"
+  source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.2"
 
   functions                   = toset(var.function_app_names)
   resource_group              = azurerm_resource_group.functions_rg

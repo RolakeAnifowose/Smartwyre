@@ -62,3 +62,9 @@ variable "resource_name_prefix" {
   description = "The resource name prefix for all resources"
   type        = string
 }
+
+variable "storage_account" {
+  description = "Singular storage account for all four function apps"
+  type = string
+  default = "smartwyrefunctions"
+}
