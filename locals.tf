@@ -1,3 +1,3 @@
 locals {
-    resource_name_prefix = "${var.business_division}-${var.project}"
+  resource_name_prefix = "${var.team}-${var.project}"
 }
