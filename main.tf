@@ -23,11 +23,6 @@ resource "azurerm_key_vault" "functions_kv" {
     key_permissions    = ["Get", "List", "Update", "Create", "Import", "Delete", "Backup", "Recover", "Backup", "Restore"]
   }
 
-  network_acls {
-    bypass         = "AzureServices"
-    default_action = "Deny"
-  }
-
   tags = var.tags
 }
 
