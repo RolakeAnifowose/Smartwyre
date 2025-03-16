@@ -37,7 +37,7 @@ variable "location" {
   type        = string
 }
 
-variable "environment" {
-  description = "Environment"
-  type = string
-}
+# variable "environment" {
+#   description = "Environment"
+#   type = string
+# }
