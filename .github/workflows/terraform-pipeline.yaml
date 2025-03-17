@@ -3,7 +3,7 @@ name: Terraform CI/CD Pipeline for Smartwyre Cloud Engineer Assessment
 on:
   push:
     branches:
-      #- develop
+      - develop
 
 env:
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
