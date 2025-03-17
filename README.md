@@ -104,55 +104,107 @@ This document outlines the changes made to improve the Terraform configuration f
 ### Creating a Deployment Pipeline for Azure
 - **Change**: Created a CI/CD pipeline using GitHub Actions to automate the deployment process.
   - **GitHub Actions Workflow Example**:
-    ```yaml
-    name: Terraform CI/CD Pipeline for Smartwyre Platform Engineer Assessment
-
-    on:
-      push:
-        branches:
-          - develop
-
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-
-    jobs:
-      terraform:
-        runs-on: ubuntu-latest
-
-        steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v1
-          with:
-            terraform_version: 1.10.3
-
-        - name: Azure Login
-          uses: azure/login@v1
-          with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
-        - name: Initialise
-          run: terraform init
-
-        - name: Validate
-          run: terraform validate
-
-        - name: Plan
-          run: terraform plan
-
-        - name: Apply
-          run: terraform apply -auto-approve
+        ```yaml
+    - name: Ensure Storage Account Exists
+		run: |
+			if ! az storage account show --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP &> /dev/null; then
+				echo "Creating backend storage account..."
+				az group create --name $RESOURCE_GROUP --location "Uk South"
+				az storage account create --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --location "UK South" --sku Standard_LRS
+				az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT
+				az storage account blob-service-properties update --resource-group $RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --enable-versioning true
+			else
+				echo "Storage account already exists."
+			fi
     ```
+- **Rationale**: Using a remote backend like Azure Storage for state management enables centralized and secure state storage. It improves team collaboration by ensuring that state files are not lost, and it supports locking to avoid state corruption during concurrent operations.
+
+### Versioning for Terraform State Blob
+- **Change**: Enabled versioning on the blob storage container to store and manage different versions of the state file.
+  - **Addition**:
+    ```hcl
+    az storage account blob-service-properties update --resource-group $RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --enable-versioning true
+    ```
+    Enable versioning directly on the container using Azure Portal or via ARM templates.
+- **Rationale**: Versioning allows easy recovery of previous versions of the state file in case of mistakes or failures, providing an additional layer of safety.
+
+### Creating a Deployment Pipeline for Azure
+- **Change**: Created a CI/CD pipeline using GitHub Actions to automate the deployment process.
+  - **GitHub Actions Workflow Example**:
+```yaml
+name: Terraform CI/CD Pipeline for Smartwyre Cloud Engineer Assessment
+
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  RESOURCE_GROUP: "CloudOps-Smartwyre-terraform-backend-group"
+  STORAGE_ACCOUNT: "smartwyreterraformstate"
+  CONTAINER_NAME: "tfstate"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.10.3
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Ensure Storage Account Exists
+      run: |
+        if ! az storage account show --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP &> /dev/null; then
+          echo "Creating backend storage account..."
+          az group create --name $RESOURCE_GROUP --location "UK South"
+          az storage account create --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --location "UK South" --sku Standard_LRS
+          az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT
+          az storage account blob-service-properties update --resource-group $RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --enable-versioning true
+        else
+          echo "Storage account already exists."
+        fi
+
+    - name: Terraform Initialise
+      run: terraform init
+
+    - name: Terraform Format
+      run: terraform fmt
+
+    - name: Setup TFLint
+      run: |
+        curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+    - name: Run TFLint
+      run: tflint --init && tflint --format compact
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      run: terraform plan
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+   ```
 - **Rationale**: Automating deployment with a pipeline ensures consistent and repeatable infrastructure deployment. This approach eliminates manual errors and reduces the time taken to push changes to production.
 
 ### Adding Monitoring with Azure Monitor
