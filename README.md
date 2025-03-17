@@ -10,6 +10,11 @@ This document outlines the changes made to improve the Terraform configuration f
 - **Code**: name = lower(substr(replace(format("myfunc%s", each.key), "-", ""), 0, 24))
 - **Rationale**: Azure storage accounts do not allow hyphens and must not exceed 24 characters.
 
+### Disabled Public Access to Storage Accounts
+- **Change**: disabled public access to the storage accounts.
+- **Code**: ```public_network_access_enabled = false```
+- **Rationale**: blocks all public access to the storage account from the internet.
+
 ### Dynamic Function App Configuration
 - **Change**: Added a `function_configurations` variable to allow dynamic configuration of function apps (e.g., `app_scale_limit`, `dotnet_version`).
 - **Rationale**: The previous code had rigid configurations. Using a map allows flexibility for different configurations of function apps, making it easier to scale and customize them as needed.
@@ -67,16 +72,16 @@ This document outlines the changes made to improve the Terraform configuration f
   - **`terraform-pipeline.yaml`** :
     ```yaml
     - name: Ensure Storage Account Exists
-		run: |
-			if ! az storage account show --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP &> /dev/null; then
-				echo "Creating backend storage account..."
-				az group create --name $RESOURCE_GROUP --location "Uk South"
-				az storage account create --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --location "UK South" --sku Standard_LRS
-				az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT
-				az storage account blob-service-properties update --resource-group $RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --enable-versioning true
-			else
-				echo "Storage account already exists."
-			fi
+	run: |
+	  if ! az storage account show --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP &> /dev/null; then
+	  echo "Creating backend storage account..."
+	  az group create --name $RESOURCE_GROUP --location "Uk South"
+	  az storage account create --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --location "UK South" --sku Standard_LRS
+	  az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT
+	  az storage account blob-service-properties update --resource-group $RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --enable-versioning true
+	else
+	  echo "Storage account already exists."
+	fi
     ```
 - **Rationale**: Using a remote backend like Azure Storage for state management enables centralized and secure state storage. It improves team collaboration by ensuring that state files are not lost, and it supports locking to avoid state corruption during concurrent operations.
 
