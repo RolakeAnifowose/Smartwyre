@@ -26,7 +26,7 @@ resource "azurerm_key_vault" "functions_kv" {
 }
 
 resource "azurerm_app_configuration" "functions_appcfg" {
-  name                = "${local.resource_name_prefix}-appconfig"
+  name                = "${local.resource_name_prefix}-appconfig-morolake"
   resource_group_name = azurerm_resource_group.functions_rg.name
   location            = var.location
   tags                = var.tags
