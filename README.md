@@ -19,7 +19,7 @@ This document outlines the changes made to improve the Terraform configuration f
 - **Rationale**: Variables make it easier to make changes and adhere to DRY principles.
 
 ### Uniform Naming Convention
-- **Change**: Added a resource name prefix to resource names containing the business division and project, ensuring uniformity across resources.
+- **Change**: Added a resource name prefix to resource names containing the business team and project, ensuring uniformity across resources.
 - **Addition**: name = "${local.resource_name_prefix}-${each.key}-plan"
 - ```hcl
   resource "azurerm_service_plan" "func_service_plan" {
@@ -53,7 +53,7 @@ This document outlines the changes made to improve the Terraform configuration f
     }
   }
 ```
-- **Rationale**: Tagging is essential for resource management, cost tracking, and compliance. Created global tags containing business division, environment, project and creation mode.
+- **Rationale**: Tagging is essential for resource management, cost tracking, and compliance. Created global tags containing business team, environment, project and creation mode.
 
 ### Enhanced Security for Azure Key Vault
 - **Change**: Implemented network ACLs for the Azure Key Vault with `bypass = "AzureServices"` and `default_action = "Deny"`.
