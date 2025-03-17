@@ -208,8 +208,9 @@ module  "function_app" {
 **GitHub Repository for Function module:** https://github.com/RolakeAnifowose/smartwyre-function-module
 
 ## Further Enhancements
-**SonarCloud Analysis**: to further improve code quality and security, I integrated SonarCloud analysis into the CI/CD pipeline. This allows automated static code analysis of Terraform scripts, detecting security vulnerabilities, maintainability issues, and best practice violations before deployment
-
 **Cost Optimization**: Terraform cost estimation using [`infracost`](https://www.infracost.io/) to estimate cloud costs before deployment.
 
 **Linting**: integrated `TFLint` into my pipeline to detect misconfigurations before deployment and enforce best practices and naming conventions.
+
+## Future Additions
+**Security & Compliance for Infrastructure as Code (IaC)**: to ensure Terraform configurations follow security best practices, I’d use **Checkov** for static code analysis.
