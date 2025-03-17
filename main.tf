@@ -55,21 +55,21 @@ module "function_app" {
       dotnet_version              = "v6.0",
       use_32_bit_worker           = false,
       use_dotnet_isolated_runtime = true,
-      minimum_tls_version         = "1.3"
+      minimum_tls_version         = "1.2"
     }
     "rebates" = {
       app_scale_limit             = 4,
       dotnet_version              = "v8.0",
       use_32_bit_worker           = false,
       use_dotnet_isolated_runtime = true,
-      minimum_tls_version         = "1.3"
+      minimum_tls_version         = "1.1"
     }
     "products-denormalizations" = {
       app_scale_limit             = 3,
       dotnet_version              = "v8.0",
       use_32_bit_worker           = false,
       use_dotnet_isolated_runtime = true,
-      minimum_tls_version         = "1.3"
+      minimum_tls_version         = "1.2"
     }
   }
   tags                 = var.tags
