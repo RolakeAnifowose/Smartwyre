@@ -15,11 +15,9 @@ resource "azurerm_key_vault" "functions_kv" {
   purge_protection_enabled   = true
   soft_delete_retention_days = 7
 
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    secret_permissions = ["Get", "List"]
+  network_acls {
+    bypass = "AzureServices"
+    default_action = "Deny"
   }
 
   tags = var.tags
@@ -33,7 +31,7 @@ resource "azurerm_app_configuration" "functions_appcfg" {
 }
 
 module "function_app" {
-  source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.14"
+  source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.15"
 
   functions      = toset(var.function_app_names)
   resource_group = azurerm_resource_group.functions_rg
@@ -62,7 +60,7 @@ module "function_app" {
       dotnet_version              = "v8.0",
       use_32_bit_worker           = false,
       use_dotnet_isolated_runtime = true,
-      minimum_tls_version         = "1.1"
+      minimum_tls_version         = "1.2"
     }
     "products-denormalizations" = {
       app_scale_limit             = 3,

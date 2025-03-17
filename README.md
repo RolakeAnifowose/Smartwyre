@@ -3,7 +3,7 @@
 ## Overview
 This document outlines the changes made to improve the Terraform configuration for deploying Azure Function Apps. 
 
-## Key Changes and Rationale
+## Objectives
 
 ### Updated Storage Account Naming
 - **Change**: Used the `replace` function to ensure compliance with terraform's storage account naming rules by replacing the `-` in the final storage account with a ``.
@@ -58,53 +58,14 @@ This document outlines the changes made to improve the Terraform configuration f
 ### Enhanced Security for Azure Key Vault
 - **Change**: Implemented network ACLs for the Azure Key Vault with `bypass = "AzureServices"` and `default_action = "Deny"`.
 - **Rationale**: This enhances security by ensuring that only Azure services can access the key vault, denying all external traffic and reducing the attack surface.
-
-
-### Improved Access Control for Key Vault
+- **Change**: Replaced the **legacy `azurerm_key_vault_access_policy`** with **RBAC roles**.
 - **Change**: Enabled **soft delete retention** and **purge protection** in the key vault configuration to retain deleted secrets for 7 days and prevent permanent deletion.
 - **Rationale**: These features ensure that secrets are not accidentally deleted and provide an additional layer of protection and recovery, which aligns with Azure's security best practices.
 
 ### Azure Remote Backend for State Storage
-- **Change**: Configured an Azure Storage Account as the remote backend for Terraform state files.
-  - **`backend.tf`** example:
-    ```hcl
-    terraform {
-      backend "azurerm" {
-        storage_account_name = "smartwyreterraformstate"
-        container_name       = "tfstate"
-        resource_group_name = "CloudOps-Smartwyre-resource-group"
-        key                  = "terraform.tfstate"
-      }
-    }
-    ```
-- **Rationale**: Using a remote backend like Azure Storage for state management enables centralized and secure state storage. It improves team collaboration by ensuring that state files are not lost, and it supports locking to avoid state corruption during concurrent operations.
-
-### Versioning for Terraform State Blob
-- **Change**: Enabled versioning on the blob storage container to store and manage different versions of the state file.
-  - **Addition**:
-    ```hcl
-    resource "azurerm_storage_account" "terraform_state" {
-      name                     = var.storage_account
-      account_tier             = "Standard"
-      account_replication_type = "LRS"
-      blob_properties {
-	      versioning_enabled = true
-      }
-    }
-
-    resource "azurerm_storage_container" "terraform_state" {
-      name                  = "tfstate"
-      storage_account_name  = azurerm_storage_account.terraform_state.name
-      container_access_type = "private"
-    }
-    ```
-    Enable versioning directly on the container using Azure Portal or via ARM templates.
-- **Rationale**: Versioning allows easy recovery of previous versions of the state file in case of mistakes or failures, providing an additional layer of safety.
-
-### Creating a Deployment Pipeline for Azure
-- **Change**: Created a CI/CD pipeline using GitHub Actions to automate the deployment process.
-  - **GitHub Actions Workflow Example**:
-        ```yaml
+- **Change**: Configured an Azure Storage Account as the remote backend for Terraform state file.
+  - **`terraform-pipeline.yaml`** :
+    ```yaml
     - name: Ensure Storage Account Exists
 		run: |
 			if ! az storage account show --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP &> /dev/null; then
@@ -122,15 +83,15 @@ This document outlines the changes made to improve the Terraform configuration f
 ### Versioning for Terraform State Blob
 - **Change**: Enabled versioning on the blob storage container to store and manage different versions of the state file.
   - **Addition**:
-    ```hcl
+    ```yaml
     az storage account blob-service-properties update --resource-group $RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --enable-versioning true
     ```
-    Enable versioning directly on the container using Azure Portal or via ARM templates.
-- **Rationale**: Versioning allows easy recovery of previous versions of the state file in case of mistakes or failures, providing an additional layer of safety.
+- **Rationale**: Versioning allows easy recovery of previous versions of the state file in case of mistakes or failures.
 
-### Creating a Deployment Pipeline for Azure
+## Extras
+### Deployment Pipeline
 - **Change**: Created a CI/CD pipeline using GitHub Actions to automate the deployment process.
-  - **GitHub Actions Workflow Example**:
+  - **GitHub Actions Workflow**:
 ```yaml
 name: Terraform CI/CD Pipeline for Smartwyre Cloud Engineer Assessment
 
@@ -205,7 +166,7 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
    ```
-- **Rationale**: Automating deployment with a pipeline ensures consistent and repeatable infrastructure deployment. This approach eliminates manual errors and reduces the time taken to push changes to production.
+- **Rationale**: Automating deployment ensures consistent and repeatable infrastructure deployment. This approach eliminates manual errors and reduces the time taken to push changes.
 
 ### Adding Monitoring with Azure Monitor
 
@@ -244,6 +205,7 @@ jobs:
   }
 - **Rationale**: Monitoring helps ensure that function apps are performing as expected and provides insights into usage patterns, errors, and failures. 
 
+
 ## Reusability Consideration
 **Git-based Module Source**: taking reusability into consideration, I created the function module as a reusable module and pushed it to a GitHub repository, versioning it and then using it as my source.
  ```hcl
@@ -262,7 +224,13 @@ module  "function_app" {
 ## Further Enhancements
 **Cost Optimization**: Terraform cost estimation using [`infracost`](https://www.infracost.io/) to estimate cloud costs before deployment.
 
-**Linting**: integrated `TFLint` into my pipeline to detect misconfigurations before deployment and enforce best practices and naming conventions.
+**Linting**: integrated `TFLint` into my pipeline to detects misconfigurations before deployment and enforce best practices and naming conventions.
 
-## Future Additions
-**Security & Compliance for Infrastructure as Code (IaC)**: to ensure Terraform configurations follow security best practices, I’d use **Checkov** for static code analysis.
+## Infrastructure Testing before Deployment
+**Static Analysis**: using `Checkov` to scan Terraform configurations for security vulnerabilities and compliance violations before deployment.
+
+**Syntax Validation**: `terraform validate` to check for syntax errors and configuration issues.
+
+**Automated Testing**: `terratest` to write and execute tests for Terraform modules, ensuring infrastructure behaves as expected.
+
+**Plan & Dry Runs**: Execute `terraform plan` to preview changes and detect unintended modifications before applying.
