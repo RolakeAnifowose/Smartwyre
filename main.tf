@@ -20,45 +20,9 @@ resource "azurerm_key_vault" "functions_kv" {
     object_id = data.azurerm_client_config.current.object_id
 
     secret_permissions = ["Get", "List"]
-    key_permissions    = ["Get", "List"]
   }
 
   tags = var.tags
-}
-
-resource "azurerm_user_assigned_identity" "identity" {
-  location            = var.location
-  name                = "${local.resource_name_prefix}-user-assigned-identity"
-  resource_group_name = azurerm_resource_group.functions_rg.name
-}
-
-resource "azurerm_key_vault_key" "key" {
-  name         = "${local.resource_name_prefix}-vault-key"
-  key_vault_id = azurerm_key_vault.functions_kv.id
-  key_type     = "RSA"
-  key_size     = 2048
-
-  key_opts = [
-    "decrypt",
-    "encrypt",
-    "sign",
-    "unwrapKey",
-    "verify",
-    "wrapKey",
-  ]
-
-  depends_on = [
-    azurerm_key_vault.functions_kv
-  ]
-
-  rotation_policy {
-    automatic {
-      time_before_expiry = "P30D"
-    }
-
-    expire_after         = "P90D"
-    notify_before_expiry = "P29D"
-  }
 }
 
 resource "azurerm_app_configuration" "functions_appcfg" {
@@ -69,7 +33,7 @@ resource "azurerm_app_configuration" "functions_appcfg" {
 }
 
 module "function_app" {
-  source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.12"
+  source = "github.com/RolakeAnifowose/smartwyre-function-module?ref=v0.0.13"
 
   functions      = toset(var.function_app_names)
   resource_group = azurerm_resource_group.functions_rg
@@ -85,25 +49,29 @@ module "function_app" {
       app_scale_limit             = 2,
       dotnet_version              = "v6.0",
       use_32_bit_worker           = false,
-      use_dotnet_isolated_runtime = true
+      use_dotnet_isolated_runtime = true,
+      minimum_tls_version         = "1.2"
     }
     "products" = {
       app_scale_limit             = 3,
       dotnet_version              = "v6.0",
       use_32_bit_worker           = false,
-      use_dotnet_isolated_runtime = true
+      use_dotnet_isolated_runtime = true,
+      minimum_tls_version         = "1.3"
     }
     "rebates" = {
       app_scale_limit             = 4,
       dotnet_version              = "v8.0",
       use_32_bit_worker           = false,
-      use_dotnet_isolated_runtime = true
+      use_dotnet_isolated_runtime = true,
+      minimum_tls_version         = "1.3"
     }
     "products-denormalizations" = {
       app_scale_limit             = 3,
       dotnet_version              = "v8.0",
       use_32_bit_worker           = false,
-      use_dotnet_isolated_runtime = true
+      use_dotnet_isolated_runtime = true,
+      minimum_tls_version         = "1.3"
     }
   }
   tags                 = var.tags

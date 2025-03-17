@@ -13,7 +13,7 @@ variable "tags" {
   description = "Tags applied to all resources, root and module"
   default = {
     Team          = "CloudOps"
-    Environment   = "Test"
+    Environment   = "Dev"
     Project       = "Smartwyre"
     Creation-mode = "Terraform"
   }
@@ -36,8 +36,3 @@ variable "location" {
   default     = "UK South"
   type        = string
 }
-
-# variable "environment" {
-#   description = "Environment"
-#   type = string
-# }
